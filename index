@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    font-family: "Segoe UI", Arial, sans-serif; color: #1f2937;
+    background: #f7f8fa; padding: 44px 60px;
+  }
+  h1 { font-size: 46px; font-weight: 700; color: #0b2545; }
+  .sub { font-size: 23px; color: #4b5563; margin-top: 6px; }
+  .sub b { color: #0f766e; }
+
+  /* Flow row */
+  .flow { display: flex; align-items: stretch; margin-top: 34px; gap: 0; }
+  .box {
+    flex: 1; background: #fff; border-radius: 14px; padding: 20px 20px 18px;
+    border: 2px solid #d1d5db; box-shadow: 0 2px 6px rgba(0,0,0,.06);
+    position: relative;
+  }
+  .box .num {
+    position: absolute; top: -18px; left: 18px; width: 36px; height: 36px;
+    border-radius: 50%; background: #0b2545; color: #fff; font-weight: 700;
+    font-size: 19px; display: flex; align-items: center; justify-content: center;
+  }
+  .box h3 { font-size: 22px; color: #0b2545; margin: 6px 0 4px; }
+  .box .tag { font-size: 15px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: .5px; }
+  .box ul { margin: 10px 0 0 20px; font-size: 17px; line-height: 1.4; }
+  .box li { margin-bottom: 4px; }
+  .arrow { width: 46px; display: flex; align-items: center; justify-content: center; font-size: 38px; color: #0f766e; font-weight: 700; }
+
+  .vp { border-color: #93c5fd; background: #eff6ff; }
+  .bubble {
+    margin-top: 12px; background: #fff; border: 2px solid #93c5fd; border-radius: 14px 14px 14px 2px;
+    padding: 12px 14px; font-size: 18px; font-style: italic; line-height: 1.35;
+  }
+  .agent { border-color: #0f766e; background: #f0fdfa; }
+  .tool { border-color: #a78bfa; background: #f5f3ff; }
+  .proc { border-color: #f59e0b; background: #fffbeb; flex: 1.25; }
+  .plat { border-color: #6b7280; background: #f3f4f6; }
+  .proc ol { margin: 10px 0 0 22px; font-size: 17px; line-height: 1.4; }
+
+  /* Middle row */
+  .mid { display: flex; gap: 26px; margin-top: 28px; }
+  .panel { background: #fff; border-radius: 14px; border: 2px solid #d1d5db; padding: 18px 22px; }
+  .panel h4 { font-size: 21px; color: #0b2545; margin-bottom: 8px; }
+  .answer { flex: 1.05; border-color: #93c5fd; }
+  .answer .back { font-size: 16px; color: #0f766e; font-weight: 700; margin-bottom: 6px; }
+  .answer pre {
+    font-family: Consolas, monospace; font-size: 16.5px; line-height: 1.45;
+    background: #f8fafc; border-radius: 8px; padding: 12px 14px; white-space: pre-wrap;
+  }
+  .answer .note { font-size: 14px; color: #6b7280; margin-top: 6px; }
+  .why { flex: 1; border-color: #0f766e; }
+  .why ul, .trade ul { list-style: none; font-size: 17.5px; line-height: 1.45; }
+  .why li::before { content: "✓ "; color: #0f766e; font-weight: 700; }
+  .trade { flex: .9; border-color: #f59e0b; }
+  .trade li::before { content: "• "; color: #b45309; font-weight: 700; }
+  .why li, .trade li { margin-bottom: 6px; }
+
+  /* Footer */
+  .alts { margin-top: 26px; }
+  .alts h4 { font-size: 21px; color: #0b2545; margin-bottom: 10px; }
+  .altrow { display: flex; gap: 18px; }
+  .alt { flex: 1; background: #fff; border: 1.5px dashed #9ca3af; border-radius: 12px; padding: 12px 16px; font-size: 16px; line-height: 1.35; }
+  .alt b { display: block; font-size: 17px; color: #0b2545; margin-bottom: 3px; }
+  .prove {
+    margin-top: 18px; background: #0b2545; color: #fff; border-radius: 12px;
+    padding: 12px 20px; font-size: 19px;
+  }
+  .prove b { color: #5eead4; }
+</style>
+</head>
+<body>
+
+<h1>Impact Analysis Agent: "What breaks if I change this system?"</h1>
+<div class="sub">Live-lookup design: <b>no crawler, no copied catalog.</b> Boomi's own metadata is read only when someone asks a question.</div>
+
+<div class="flow">
+  <div class="box vp">
+    <div class="num">1</div>
+    <div class="tag">Executive</div>
+    <h3>Asks in chat</h3>
+    <div class="bubble">"I'm moving our Salesforce data off Snowflake to another platform. What are my impacts?"</div>
+  </div>
+  <div class="arrow">→</div>
+
+  <div class="box agent">
+    <div class="num">2</div>
+    <div class="tag">Agentstudio · conversational</div>
+    <h3>Impact Agent</h3>
+    <ul>
+      <li>Clarifies the target: which database or schema?</li>
+      <li>Calls the lookup tool</li>
+      <li>Explains the result in business terms</li>
+      <li>Guardrail: <b>impact only, no cost estimates</b></li>
+    </ul>
+  </div>
+  <div class="arrow">→</div>
+
+  <div class="box tool">
+    <div class="num">3</div>
+    <div class="tag">Agentstudio · OpenAPI tool</div>
+    <h3>"Find impacted integrations"</h3>
+    <ul>
+      <li>Input: system + database / schema</li>
+      <li>Calls the Boomi API process</li>
+      <li>Returns its report to the agent</li>
+    </ul>
+  </div>
+  <div class="arrow">→</div>
+
+  <div class="box proc">
+    <div class="num">4</div>
+    <div class="tag">Boomi Integration · API process</div>
+    <h3>Impact Lookup (runs on demand)</h3>
+    <ol>
+      <li>Find connections to the target</li>
+      <li>Find operations using its tables</li>
+      <li>Find processes using them ("where used")</li>
+      <li>Check deployments + environment overrides</li>
+      <li>List the <b>other</b> systems in each process</li>
+    </ol>
+  </div>
+  <div class="arrow">→</div>
+
+  <div class="box plat">
+    <div class="num">5</div>
+    <div class="tag">Source of truth</div>
+    <h3>Boomi Platform API</h3>
+    <ul>
+      <li>Connections</li>
+      <li>Operations</li>
+      <li>Component references</li>
+      <li>Deployments</li>
+      <li>Environment extensions</li>
+    </ul>
+  </div>
+</div>
+
+<div class="mid">
+  <div class="panel answer">
+    <div class="back">← Answer returns to the executive</div>
+    <h4>Sample reply</h4>
+<pre>7 integrations affected (5 in Production)
+Source systems:      Salesforce, Workday
+Destination systems: Tableau, NetSuite, Finance SFTP
+Integrations to update:
+  • SF Opportunities → Snowflake       (Prod)
+  • Snowflake → NetSuite Revenue        (Prod)
+  • Snowflake → Tableau Extract         (Prod) …</pre>
+    <div class="note">Illustrative example only</div>
+  </div>
+
+  <div class="panel why">
+    <h4>Why live lookup?</h4>
+    <ul>
+      <li>Always current: reads Boomi as it is right now</li>
+      <li>Nothing to schedule, store, or keep in sync</li>
+      <li>Accurate: the process follows the dependencies in code; the agent only explains them</li>
+      <li>Uses a process + OpenAPI tool, because an Integration tool returns only run status, never the report</li>
+    </ul>
+  </div>
+
+  <div class="panel trade">
+    <h4>Trade-offs</h4>
+    <ul>
+      <li>Answers take seconds, not milliseconds</li>
+      <li>Sees Boomi integrations only</li>
+      <li>Large accounts: watch Platform API rate limits</li>
+      <li>"Ideal world" extras (severity, owners) come in a later phase</li>
+    </ul>
+  </div>
+</div>
+
+<div class="alts">
+  <h4>Other ways to avoid a crawler</h4>
+  <div class="altrow">
+    <div class="alt"><b>Register at deploy time</b>The CI/CD pipeline records each integration's systems when it's deployed, so the catalog updates itself.</div>
+    <div class="alt"><b>Reuse an existing data catalog</b>If the organization already has one, the agent queries it through an OpenAPI or MCP tool.</div>
+    <div class="alt"><b>Snowflake's own lineage views</b>Query <i>ACCESS_HISTORY</i> live to find dashboards and apps that use Snowflake outside Boomi.</div>
+    <div class="alt"><b>Owner-maintained registry</b>Teams list their own integrations (e.g. in DataHub). Simplest option, but it can go stale.</div>
+  </div>
+</div>
+
+<div class="prove"><b>Prove it:</b> ask the agent about the recent real migration and compare its answer with the impact list the team built by hand.</div>
+
+</body>
+</html>
